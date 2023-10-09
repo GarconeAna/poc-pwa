@@ -1,23 +1,53 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from "react";
+import "./App.css";
 
-function App() {
+const App = () => {
+  const [name, setName] = useState("");
+  const [location, setLocation] = useState("");
+  const nameLocal = localStorage.getItem("Name");
+  console.log(nameLocal)
+
+  const handleName = (e) => {
+    setName(e.target.value);
+  }
+
+  const handleLocation = () => {
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(function (position) {
+        const latitude = position.coords.latitude;
+        const longitude = position.coords.longitude;
+
+        setLocation(`latitude: ${latitude}, longitude: ${longitude}`);
+      })
+    } else {
+      setLocation("error")
+    }
+  }
+
+  const saveName = () => {
+    localStorage.setItem("Name", name);
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div style={{
+      display: "flex",
+      justifyContent: "space-evenly",
+    }}>
+      <div>
+        <p>{`Seu nome: ${name || nameLocal || "-"}`}</p>
+        <input 
+          type="text"
+          value={name}
+          onChange={handleName}
+          placeholder="Digite seu nome"
+        />
+        <button onClick={saveName}>salvar</button>
+      </div>
+
+      <div>
+        <p>{`Sua localização: ${location || "-"}`}</p>
+        <button onClick={handleLocation}>obter localização</button>
+      </div> 
     </div>
   );
 }
